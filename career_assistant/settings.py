@@ -11,11 +11,9 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
 from pathlib import Path
+import rest_framework_simplejwt
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-import api.apps
-import frontend.apps
-
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
@@ -40,8 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    api.apps.ApiConfig,
-    frontend.apps.FrontendConfig
+    'api',
+    'frontend'
 ]
 
 MIDDLEWARE = [
@@ -105,6 +103,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTH_USER_MODEL = 'api.User'
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
@@ -130,6 +129,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
   'DEFAULT_AUTHENTICATION_CLASSES': (
-    'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+    'rest_framework_simplejwt.authentication.JWTAuthentication',
   ),
 }
