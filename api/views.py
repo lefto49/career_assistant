@@ -1,14 +1,17 @@
-from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import status
 from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
-from django.contrib.auth.hashers import check_password
+from django.contrib.auth.tokens import PasswordResetTokenGenerator
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
+from django.contrib.sites.shortcuts import get_current_site
+from django.core.mail import send_mail
 
 from .models import User
-from .serializers import UserSerializer
+from .serializers import UserSerializer, LoginSerializer
+from NotAuthenticated import NotAuthenticated
 
 
 class CreateUserView(CreateAPIView, TokenObtainPairView):
@@ -28,23 +31,14 @@ class CreateUserView(CreateAPIView, TokenObtainPairView):
                          'access': str(token.access_token)}, status=status.HTTP_201_CREATED)
 
 
-class LoginView(CreateAPIView):
+class LoginView(CreateAPIView, TokenObtainPairView):
     permission_classes = (AllowAny,)
-    serializer_class = UserSerializer
+    serializer_class = LoginSerializer
 
     def post(self, request, *args, **kwargs):
-        try:
-            user = User.objects.get(email=request.data['email'])
-        except ObjectDoesNotExist:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-
-        if not check_password(request.data['password'], user.password):
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-
-        token = RefreshToken.for_user(user)
-        return Response({'user': self.serializer_class(user).data,
-                         'refresh': str(token),
-                         'access': str(token.access_token)}, status=status.HTTP_200_OK)
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        return Response(serializer.validated_data, status=status.HTTP_200_OK)
 
 
 class RetrieveUpdateUserView(RetrieveUpdateAPIView):
@@ -52,8 +46,44 @@ class RetrieveUpdateUserView(RetrieveUpdateAPIView):
     serializer_class = UserSerializer
 
     def get(self, request, *args, **kwargs):
-        serializer = self.serializer_class(request.user)
+        user = User.objects.get(id=request.data.get('id', 1))
+        serializer = self.serializer_class(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def put(self, request, *args, **kwargs):
+        user = User.objects.get(id=request.data.get('id', 1))
+        serializer = self.serializer_class(user, data=request.data)
+
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class ResetPasswordView(CreateAPIView):
+    permission_classes = (NotAuthenticated,)
+
+    def post(self, request, *args, **kwargs):
+        email = request.data.get('email', '')
+
+        if not User.objects.filter(email=email).exists():
+            return Response({'error': 'user with such email does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+
+        user = User.objects.get(email=email)
+        token = PasswordResetTokenGenerator.make_token(user)
+        user_id = urlsafe_base64_encode(user.id)
+        domain = get_current_site(request=request).domain
+        reset_path = 'http://' + domain + '/' + user_id + '/' + token
+
+        message = "Hello from Career Assistant! \nRecently you've asked to reset your password." \
+                  " Click on the following link for further instructions: \n{0}\n" \
+                  "If you didn't ask to reset your password, just ignore this email.".format(reset_path)
+        send_mail('Password Reset', message, 'no-reply@careerassistant.ru', email)
+
+        return Response(status=status.HTTP_200_OK)
+
+
+class ValidateResetPasswordView(CreateAPIView):
+    permission_classes = (NotAuthenticated,)
+
+    def post(self, request, *args, **kwargs):
         pass

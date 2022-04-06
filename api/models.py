@@ -4,12 +4,13 @@ from django.db import models
 
 
 class UserManager(BaseUserManager):
-    def create_user(self, email, password, **validated_data):
+    def create(self, email, password, **validated_data):
         user = self.model(email=self.normalize_email(email), **validated_data)
         user.set_password(password)
 
-        user.save(using=self._db)
+        user.save()
         return user
+
 
 class User(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField(max_length=30)
