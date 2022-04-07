@@ -7,11 +7,11 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
 from django.contrib.sites.shortcuts import get_current_site
-from django.core.mail import send_mail
+from django.core.mail import EmailMessage
 
 from .models import User
-from .serializers import UserSerializer, LoginSerializer
-from NotAuthenticated import NotAuthenticated
+from .serializers import UserSerializer, LoginSerializer, PasswordResetSerializer
+from .NotAuthenticated import NotAuthenticated
 
 
 class CreateUserView(CreateAPIView, TokenObtainPairView):
@@ -59,8 +59,9 @@ class RetrieveUpdateUserView(RetrieveUpdateAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class ResetPasswordView(CreateAPIView):
+class PasswordResetView(CreateAPIView):
     permission_classes = (NotAuthenticated,)
+    serializer_class = PasswordResetSerializer
 
     def post(self, request, *args, **kwargs):
         email = request.data.get('email', '')
@@ -69,21 +70,26 @@ class ResetPasswordView(CreateAPIView):
             return Response({'error': 'user with such email does not exist'}, status=status.HTTP_400_BAD_REQUEST)
 
         user = User.objects.get(email=email)
-        token = PasswordResetTokenGenerator.make_token(user)
-        user_id = urlsafe_base64_encode(user.id)
+        token = PasswordResetTokenGenerator().make_token(user)
+        id = urlsafe_base64_encode(str(user.id).encode('utf-8'))
         domain = get_current_site(request=request).domain
-        reset_path = 'http://' + domain + '/' + user_id + '/' + token
+        reset_path = 'http://' + domain + '/' + id + '/' + token
 
+        mail_subject = 'Password Reset'
         message = "Hello from Career Assistant! \nRecently you've asked to reset your password." \
                   " Click on the following link for further instructions: \n{0}\n" \
                   "If you didn't ask to reset your password, just ignore this email.".format(reset_path)
-        send_mail('Password Reset', message, 'no-reply@careerassistant.ru', email)
+
+        email = EmailMessage(
+            mail_subject, message, from_email='careerassistant@yandex.ru',  to=[email]
+        )
+        email.send()
 
         return Response(status=status.HTTP_200_OK)
 
 
 class ValidateResetPasswordView(CreateAPIView):
-    permission_classes = (NotAuthenticated,)
+    permission_classes = (NotAuthenticated, )
 
     def post(self, request, *args, **kwargs):
         pass

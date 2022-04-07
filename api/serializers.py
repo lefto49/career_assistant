@@ -1,3 +1,5 @@
+from abc import ABC
+
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
@@ -35,3 +37,7 @@ class LoginSerializer(TokenObtainPairSerializer):
         #     update_last_login(None, self.user)
 
         return data
+
+
+class PasswordResetSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True)
