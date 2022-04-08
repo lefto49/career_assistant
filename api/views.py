@@ -10,7 +10,7 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMessage
 
 from .models import User
-from .serializers import UserSerializer, LoginSerializer, PasswordResetSerializer
+from .serializers import UserSerializer, LoginSerializer, PasswordResetSerializer, PasswordResetConfirmedSerializer
 from .NotAuthenticated import NotAuthenticated
 
 
@@ -79,7 +79,6 @@ class PasswordResetView(CreateAPIView):
         message = "Hello from Career Assistant! \nRecently you've asked to reset your password." \
                   " Click on the following link for further instructions: \n{0}\n" \
                   "If you didn't ask to reset your password, just ignore this email.".format(reset_path)
-
         email = EmailMessage(
             mail_subject, message, from_email='careerassistant@yandex.ru',  to=[email]
         )
@@ -89,7 +88,21 @@ class PasswordResetView(CreateAPIView):
 
 
 class ValidateResetPasswordView(CreateAPIView):
-    permission_classes = (NotAuthenticated, )
+    permission_classes = (NotAuthenticated,)
+    serializer_class = PasswordResetConfirmedSerializer
 
     def post(self, request, *args, **kwargs):
-        pass
+        id = int(urlsafe_base64_decode(request.data.get('id', '')).decode('utf-8'))
+
+        if not User.objects.filter(id=id).exists():
+            return Response({'error': 'user with such an id does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+
+        user = User.objects.get(id=id)
+
+        if not PasswordResetTokenGenerator().check_token(user, request.data.get('token', '')):
+            return Response({'error': 'invalid token'}, status=status.HTTP_400_BAD_REQUEST)
+
+        user.set_password(request.data.get('password', ''))
+        user.save()
+
+        return Response(status=status.HTTP_200_OK)
