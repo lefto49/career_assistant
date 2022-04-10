@@ -24,6 +24,7 @@ class CreateUserView(CreateAPIView, TokenObtainPairView):
     def post(self, request, *args, **kwargs):
         """
         Manages the process of creating a new user.
+        Returns 400 status if incorrect data was passed.
         :param request: data that must be passed: lastname, firstname, birth year, city,
                                                   university, vacancy, experience, email, password.
         :return: user data, access and refresh tokens.
@@ -51,6 +52,7 @@ class LoginView(CreateAPIView, TokenObtainPairView):
     def post(self, request, *args, **kwargs):
         """
         Manages the process of logging in a user.
+        Returns 401 status if incorrect user credentials were passed.
         :param request: data that must be passed: email, password.
         :return: user data, access and refresh tokens.
         """
@@ -66,6 +68,7 @@ class RetrieveUpdateUserView(RetrieveUpdateAPIView):
     def get(self, request, *args, **kwargs):
         """
         Gets user information by an id.
+        Returns 400 status if user with such an id does not exist.
         :param request: data that must be passed: user id.
         :return: data of the user with the specified id.
         """
@@ -79,6 +82,7 @@ class RetrieveUpdateUserView(RetrieveUpdateAPIView):
     def put(self, request, *args, **kwargs):
         """
         Updates user data.
+        Returns 400 status if new data was incorrect.
         :param request: data that must be passed: all User model fields including both changed and unchanged.
         :return: refreshed user data.
         """
@@ -101,6 +105,7 @@ class PasswordResetView(CreateAPIView):
     def post(self, request, *args, **kwargs):
         """
         Sends an email that allows the user to reset the password.
+        Returns 400 status if user with such an email does not exist.
         :param request: data that must be passed: user's email.
         """
         serializer = self.serializer_class(data=request.data)
@@ -135,6 +140,7 @@ class ValidateResetPasswordView(CreateAPIView):
     def post(self, request, *args, **kwargs):
         """
         Updates the user's password in the database.
+        Returns 400 status if user with such an id does not exist or an invalid token was passed.
         :param request: data that must be passed: encoded user id, reset token, new password.
         """
         serializer = self.serializer_class(data=request.data)
