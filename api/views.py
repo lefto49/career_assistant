@@ -1,5 +1,6 @@
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import status
+from rest_framework.exceptions import ValidationError
 from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
@@ -21,9 +22,19 @@ class CreateUserView(CreateAPIView, TokenObtainPairView):
     serializer_class = UserSerializer
 
     def post(self, request, *args, **kwargs):
+        """
+        Manages the process of creating a new user.
+        :param request: data that must be passed: lastname, firstname, birth year, city,
+                                                  university, vacancy, experience, email, password.
+        :return: user data, access and refresh tokens.
+        """
         serializer = self.serializer_class(data=request.data)
 
-        serializer.is_valid(raise_exception=True)
+        try:
+            serializer.is_valid(raise_exception=True)
+        except ValidationError as e:
+            return Response({'error': e.detail}, status=status.HTTP_400_BAD_REQUEST)
+
         user = serializer.save()
 
         token = RefreshToken.for_user(user)
@@ -38,6 +49,11 @@ class LoginView(CreateAPIView, TokenObtainPairView):
     serializer_class = LoginSerializer
 
     def post(self, request, *args, **kwargs):
+        """
+        Manages the process of logging in a user.
+        :param request: data that must be passed: email, password.
+        :return: user data, access and refresh tokens.
+        """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         return Response(serializer.validated_data, status=status.HTTP_200_OK)
@@ -48,15 +64,32 @@ class RetrieveUpdateUserView(RetrieveUpdateAPIView):
     serializer_class = UserSerializer
 
     def get(self, request, *args, **kwargs):
+        """
+        Gets user information by an id.
+        :param request: data that must be passed: user id.
+        :return: data of the user with the specified id.
+        """
+        if not User.objects.filter(id=request.data.get('id', 1)).exists():
+            return Response({'error': 'user with such an id does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+
         user = User.objects.get(id=request.data.get('id', 1))
         serializer = self.serializer_class(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
     def put(self, request, *args, **kwargs):
+        """
+        Updates user data.
+        :param request: data that must be passed: all User model fields including both changed and unchanged.
+        :return: refreshed user data.
+        """
         user = User.objects.get(id=request.data.get('id', 1))
         serializer = self.serializer_class(user, data=request.data)
 
-        serializer.is_valid(raise_exception=True)
+        try:
+            serializer.is_valid(raise_exception=True)
+        except ValidationError as e:
+            return Response({'error': e.detail}, status=status.HTTP_400_BAD_REQUEST)
+
         serializer.save()
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -66,6 +99,10 @@ class PasswordResetView(CreateAPIView):
     serializer_class = PasswordResetSerializer
 
     def post(self, request, *args, **kwargs):
+        """
+        Sends an email that allows the user to reset the password.
+        :param request: data that must be passed: user's email.
+        """
         serializer = self.serializer_class(data=request.data)
         try:
             serializer.is_valid(raise_exception=True)
@@ -73,10 +110,11 @@ class PasswordResetView(CreateAPIView):
             return Response({'error': 'user with such email does not exist'}, status=status.HTTP_400_BAD_REQUEST)
 
         user = User.objects.get(email=serializer.data['email'])
+        # Creates all the necessary parts for a reset link.
         token = PasswordResetTokenGenerator().make_token(user)
-        id = urlsafe_base64_encode(str(user.id).encode('utf-8'))
+        encoded_uid = urlsafe_base64_encode(str(user.id).encode('utf-8'))
         domain = get_current_site(request=request).domain
-        reset_path = 'http://' + domain + '/' + id + '/' + token
+        reset_path = 'https://' + domain + '/' + encoded_uid + '/' + token
 
         mail_subject = 'Password Reset'
         message = "Hello from Career Assistant! \nRecently you've asked to reset your password." \
@@ -95,6 +133,10 @@ class ValidateResetPasswordView(CreateAPIView):
     serializer_class = PasswordResetConfirmedSerializer
 
     def post(self, request, *args, **kwargs):
+        """
+        Updates the user's password in the database.
+        :param request: data that must be passed: encoded user id, reset token, new password.
+        """
         serializer = self.serializer_class(data=request.data)
 
         try:
