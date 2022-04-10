@@ -4,6 +4,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+from jwt import decode
 from rest_framework_simplejwt.exceptions import InvalidToken
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
@@ -11,6 +12,8 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.http import urlsafe_base64_encode
 from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMessage
+
+import career_assistant.settings
 
 from .models import User
 from .serializers import UserSerializer, LoginSerializer, PasswordResetSerializer, PasswordResetConfirmedSerializer
@@ -67,15 +70,17 @@ class RetrieveUpdateUserView(RetrieveUpdateAPIView):
 
     def get(self, request, *args, **kwargs):
         """
-        Gets user information by an id.
+        Gets user information using id decoded from an access token.
         Returns 400 status if user with such an id does not exist.
-        :param request: data that must be passed: user id.
         :return: data of the user with the specified id.
         """
-        if not User.objects.filter(id=request.data.get('id', 1)).exists():
+        token = request.headers['Authorization'][7:]
+        uid = decode(token, career_assistant.settings.SECRET_KEY, algorithms=['HS256'])['user_id']
+
+        if not User.objects.filter(id=uid).exists():
             return Response({'error': 'user with such an id does not exist'}, status=status.HTTP_400_BAD_REQUEST)
 
-        user = User.objects.get(id=request.data.get('id', 1))
+        user = User.objects.get(id=uid)
         serializer = self.serializer_class(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
