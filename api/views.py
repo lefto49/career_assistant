@@ -1,7 +1,7 @@
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
-from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView
+from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView, ListCreateAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from jwt import decode
@@ -15,9 +15,10 @@ from django.core.mail import EmailMessage
 
 import career_assistant.settings
 
-from .models import User
+from .models import User, Confirmation
 from .serializers import UserSerializer, LoginSerializer, PasswordResetSerializer, PasswordResetConfirmedSerializer
 from .NotAuthenticated import NotAuthenticated
+from .utils import generate_code
 
 
 class CreateUserView(CreateAPIView, TokenObtainPairView):
@@ -162,3 +163,55 @@ class ValidateResetPasswordView(CreateAPIView):
         user.save()
 
         return Response(status=status.HTTP_200_OK)
+
+
+class ConfirmEmailView(ListCreateAPIView):
+    def get(self, request, *args, **kwargs):
+        """
+        Sends an email with a confirmation code to the user that wants to sign up.
+        :param request: data that must be passed: user's email address.
+        :return: 400 status code if a user with such an email already exists, 200 if everything is ok
+        """
+        code = generate_code()
+        email = request.data['email']
+
+        if User.objects.filter(email=email).exists():
+            return Response({'error': 'user with such an email already exists'}, status=status.HTTP_400_BAD_REQUEST)
+
+        if Confirmation.objects.filter(email=email).exists():
+            confirmation = Confirmation.objects.get(email=email)
+            confirmation.code = code
+        else:
+            confirmation = Confirmation(code=code, email=email)
+
+        confirmation.save()
+
+        mail_subject = 'Email Confirmation'
+        message = "Hello from Career Assistant! \nEnter this code to confirm your email:\n{0}".format(code)
+        email = EmailMessage(
+            mail_subject, message, from_email='careerassistant@yandex.ru', to=[email]
+        )
+        email.send()
+        return Response(status=status.HTTP_200_OK)
+
+    def post(self, request, *args, **kwargs):
+        """
+        Checks if entered confirmation code equals the one that was sent.
+        :param request: data that must be passed: email, entered code.
+        :return: 400 status code if a confirmation code was not sent to such an email or incorrect code was entered,
+        200 if everything is ok
+        """
+        email = request.data['email']
+        code = request.data['code']
+
+        if not Confirmation.objects.filter(email=email).exists():
+            return Response({'error': 'no confirmation code was sent to this email'},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        if not Confirmation.objects.filter(email=email, code=code).exists():
+            return Response({'error': 'incorrect confirmation code'}, status=status.HTTP_400_BAD_REQUEST)
+
+        confirmation = Confirmation.objects.get(email=email, code=code)
+        confirmation.delete()
+
+        return Response({'email': email}, status=status.HTTP_200_OK)

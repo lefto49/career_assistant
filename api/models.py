@@ -3,6 +3,11 @@ from django.contrib.auth.models import PermissionsMixin
 from django.db import models
 
 
+class Confirmation(models.Model):
+    email = models.EmailField()
+    code = models.CharField(max_length=10)
+
+
 class UserManager(BaseUserManager):
     def create(self, email, password, **validated_data):
         user = self.model(email=self.normalize_email(email), **validated_data)
