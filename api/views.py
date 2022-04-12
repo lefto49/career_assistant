@@ -22,7 +22,7 @@ from .utils import generate_code
 
 
 class CreateUserView(CreateAPIView, TokenObtainPairView):
-    permission_classes = (AllowAny,)
+    permission_classes = (NotAuthenticated,)
     serializer_class = UserSerializer
 
     def post(self, request, *args, **kwargs):
@@ -50,7 +50,7 @@ class CreateUserView(CreateAPIView, TokenObtainPairView):
 
 
 class LoginView(CreateAPIView, TokenObtainPairView):
-    permission_classes = (AllowAny,)
+    permission_classes = (NotAuthenticated,)
     serializer_class = LoginSerializer
 
     def post(self, request, *args, **kwargs):
