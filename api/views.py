@@ -92,7 +92,10 @@ class RetrieveUpdateUserView(RetrieveUpdateAPIView):
         :param request: data that must be passed: all User model fields including both changed and unchanged.
         :return: refreshed user data.
         """
-        user = User.objects.get(id=request.data.get('id', 1))
+        token = request.headers['Authorization'][7:]
+        uid = decode(token, career_assistant.settings.SECRET_KEY, algorithms=['HS256'])['user_id']
+
+        user = User.objects.get(id=uid)
         serializer = self.serializer_class(user, data=request.data)
 
         try:
@@ -127,10 +130,11 @@ class PasswordResetView(CreateAPIView):
         domain = get_current_site(request=request).domain
         reset_path = 'https://' + domain + '/' + encoded_uid + '/' + token
 
-        mail_subject = 'Password Reset'
-        message = "Hello from Career Assistant! \nRecently you've asked to reset your password." \
-                  " Click on the following link for further instructions: \n{0}\n" \
-                  "If you didn't ask to reset your password, just ignore this email.".format(reset_path)
+        mail_subject = 'Восстановление пароля'
+        message = "Здравствуйте! \n\nС Вашего аккаунта поступил запрос на смену пароля." \
+                  " Если Вы действительно хотите сменить пароль, перейдите по указанной ссылке " \
+                  "и следуйте дальнейшим инструкциям: \n{0}\n\n Если Вы не отправляли запрос, убедитесь," \
+                  " что третьи лица не имеют доступа к Вашему аккаунту.".format(reset_path)
         email = EmailMessage(
             mail_subject, message, from_email='careerassistant@yandex.ru', to=[serializer.data['email']]
         )
@@ -186,8 +190,8 @@ class ConfirmEmailView(ListCreateAPIView):
 
         confirmation.save()
 
-        mail_subject = 'Email Confirmation'
-        message = "Hello from Career Assistant! \nEnter this code to confirm your email:\n{0}".format(code)
+        mail_subject = 'Подтверждение электронной почты'
+        message = "Здравствуйте! \n\nДля подтверждения почты введите этот код:\n{0}".format(code)
         email = EmailMessage(
             mail_subject, message, from_email='careerassistant@yandex.ru', to=[email]
         )
