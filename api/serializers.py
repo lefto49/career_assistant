@@ -47,16 +47,6 @@ class LoginSerializer(TokenObtainPairSerializer):
 
 
 class PasswordResetSerializer(serializers.Serializer):
-    email = serializers.EmailField(required=True)
-
-    def validate(self, data):
-        if not User.objects.filter(email=data['email']).exists():
-            raise ObjectDoesNotExist
-
-        return data
-
-
-class PasswordResetConfirmedSerializer(serializers.Serializer):
     password = serializers.CharField(max_length=37)
     id = serializers.CharField(max_length=37)
     token = serializers.CharField(max_length=1024)

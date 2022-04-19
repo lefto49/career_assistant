@@ -16,7 +16,7 @@ from django.core.mail import EmailMessage
 import career_assistant.settings
 
 from .models import User, Confirmation
-from .serializers import UserSerializer, LoginSerializer, PasswordResetSerializer, PasswordResetConfirmedSerializer
+from .serializers import UserSerializer, LoginSerializer, PasswordResetSerializer
 from .NotAuthenticated import NotAuthenticated
 from .utils import generate_code
 
@@ -111,19 +111,16 @@ class PasswordResetView(CreateAPIView):
     permission_classes = (NotAuthenticated,)
     serializer_class = PasswordResetSerializer
 
-    def post(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
         """
         Sends an email that allows the user to reset the password.
         Returns 400 status if user with such an email does not exist.
         :param request: data that must be passed: user's email.
         """
-        serializer = self.serializer_class(data=request.data)
-        try:
-            serializer.is_valid(raise_exception=True)
-        except ObjectDoesNotExist:
+        if not User.objects.filter(email=request.data['email']).exists:
             return Response({'error': 'user with such email does not exist'}, status=status.HTTP_400_BAD_REQUEST)
 
-        user = User.objects.get(email=serializer.data['email'])
+        user = User.objects.get(email=request.data['email'])
         # Creates all the necessary parts for a reset link.
         token = PasswordResetTokenGenerator().make_token(user)
         encoded_uid = urlsafe_base64_encode(str(user.id).encode('utf-8'))
@@ -135,16 +132,11 @@ class PasswordResetView(CreateAPIView):
                   " Click on the following link for further instructions: \n{0}\n\n" \
                   "If you didn't ask to reset your password, just ignore this email.".format(reset_path)
         email = EmailMessage(
-            mail_subject, message, from_email='careerassistant@yandex.ru', to=[serializer.data['email']]
+            mail_subject, message, from_email='careerassistant@yandex.ru', to=[request.data['email']]
         )
         email.send()
 
         return Response(status=status.HTTP_200_OK)
-
-
-class ValidateResetPasswordView(CreateAPIView):
-    permission_classes = (NotAuthenticated,)
-    serializer_class = PasswordResetConfirmedSerializer
 
     def post(self, request, *args, **kwargs):
         """
@@ -165,7 +157,7 @@ class ValidateResetPasswordView(CreateAPIView):
         user.set_password(serializer.data['password'])
         user.save()
 
-        return Response(status=status.HTTP_200_OK)
+        return Response({'user': user.id}, status=status.HTTP_200_OK)
 
 
 class ConfirmEmailView(ListCreateAPIView):
