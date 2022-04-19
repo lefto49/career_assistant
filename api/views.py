@@ -157,7 +157,7 @@ class PasswordResetView(CreateAPIView):
         user.set_password(serializer.data['password'])
         user.save()
 
-        return Response({'user': user.id}, status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_200_OK)
 
 
 class ConfirmEmailView(ListCreateAPIView):
