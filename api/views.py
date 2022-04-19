@@ -131,8 +131,8 @@ class PasswordResetView(CreateAPIView):
         reset_path = 'https://' + domain + '/' + encoded_uid + '/' + token
 
         mail_subject = 'Password Reset'
-        message = "Hello from Career Assistant! \nRecently you've asked to reset your password." \
-                  " Click on the following link for further instructions: \n{0}\n" \
+        message = "Hello from Career Assistant! \n\nRecently you've asked to reset your password." \
+                  " Click on the following link for further instructions: \n{0}\n\n" \
                   "If you didn't ask to reset your password, just ignore this email.".format(reset_path)
         email = EmailMessage(
             mail_subject, message, from_email='careerassistant@yandex.ru', to=[serializer.data['email']]
@@ -190,7 +190,7 @@ class ConfirmEmailView(ListCreateAPIView):
         confirmation.save()
 
         mail_subject = 'Email Confirmation'
-        message = "Hello from Career Assistant! \nEnter this code to confirm your email:\n{0}".format(code)
+        message = "Hello from Career Assistant! \n\nEnter this code to confirm your email:\n{0}".format(code)
         email = EmailMessage(
             mail_subject, message, from_email='careerassistant@yandex.ru', to=[email]
         )
