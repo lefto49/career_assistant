@@ -110,11 +110,11 @@ class RetrieveUpdateUserView(RetrieveUpdateAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-class PasswordResetView(CreateAPIView):
+class GetResetLinkView(CreateAPIView):
     permission_classes = (NotAuthenticated,)
     serializer_class = PasswordResetSerializer
 
-    def get(self, request, *args, **kwargs):
+    def post(self, request, *args, **kwargs):
         """
         Sends an email that allows the user to reset the password.
         Returns 400 status if user with such an email does not exist.
@@ -141,6 +141,11 @@ class PasswordResetView(CreateAPIView):
 
         return Response(status=status.HTTP_200_OK)
 
+
+class PasswordResetView(CreateAPIView):
+    permission_classes = (NotAuthenticated,)
+    serializer_class = PasswordResetSerializer
+
     def post(self, request, *args, **kwargs):
         """
         Updates the user's password in the database.
@@ -163,8 +168,8 @@ class PasswordResetView(CreateAPIView):
         return Response(status=status.HTTP_200_OK)
 
 
-class ConfirmEmailView(ListCreateAPIView):
-    def get(self, request, *args, **kwargs):
+class GetConfirmationCodeView(CreateAPIView):
+    def post(self, request, *args, **kwargs):
         """
         Sends an email with a confirmation code to the user that wants to sign up.
         :param request: data that must be passed: user's email address.
@@ -192,6 +197,8 @@ class ConfirmEmailView(ListCreateAPIView):
         email.send()
         return Response(status=status.HTTP_200_OK)
 
+
+class ConfirmEmailView(CreateAPIView):
     def post(self, request, *args, **kwargs):
         """
         Checks if entered confirmation code equals the one that was sent.
