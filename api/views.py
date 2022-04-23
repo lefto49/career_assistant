@@ -79,7 +79,7 @@ class RetrieveUpdateUserView(RetrieveUpdateAPIView):
         uid = decode(token, career_assistant.settings.SECRET_KEY, algorithms=['HS256'])['user_id']
 
         if not User.objects.filter(id=uid).exists():
-            return Response({'error': 'user with such an id does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'User with such an id does not exist'}, status=status.HTTP_400_BAD_REQUEST)
 
         user = User.objects.get(id=uid)
         serializer = self.serializer_class(user)
@@ -94,6 +94,9 @@ class RetrieveUpdateUserView(RetrieveUpdateAPIView):
         """
         token = request.headers['Authorization'][7:]
         uid = decode(token, career_assistant.settings.SECRET_KEY, algorithms=['HS256'])['user_id']
+
+        if not User.objects.filter(id=uid).exists():
+            return Response({'error': 'User with such an id does not exist'}, status=status.HTTP_400_BAD_REQUEST)
 
         user = User.objects.get(id=uid)
         serializer = self.serializer_class(user, data=request.data)
@@ -118,7 +121,7 @@ class PasswordResetView(CreateAPIView):
         :param request: data that must be passed: user's email.
         """
         if not User.objects.filter(email=request.data['email']).exists:
-            return Response({'error': 'user with such email does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'User with such email does not exist'}, status=status.HTTP_400_BAD_REQUEST)
 
         user = User.objects.get(email=request.data['email'])
         # Creates all the necessary parts for a reset link.
@@ -149,9 +152,9 @@ class PasswordResetView(CreateAPIView):
         try:
             serializer.is_valid(raise_exception=True)
         except ObjectDoesNotExist:
-            return Response({'error': 'user with such an id does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'User with such an id does not exist'}, status=status.HTTP_400_BAD_REQUEST)
         except InvalidToken:
-            return Response({'error': 'invalid token'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'Invalid token'}, status=status.HTTP_400_BAD_REQUEST)
 
         user = User.objects.get(id=serializer.data['id'])
         user.set_password(serializer.data['password'])
@@ -171,7 +174,7 @@ class ConfirmEmailView(ListCreateAPIView):
         email = request.data['email']
 
         if User.objects.filter(email=email).exists():
-            return Response({'error': 'user with such an email already exists'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'User with such an email already exists'}, status=status.HTTP_400_BAD_REQUEST)
 
         if Confirmation.objects.filter(email=email).exists():
             confirmation = Confirmation.objects.get(email=email)
@@ -200,11 +203,11 @@ class ConfirmEmailView(ListCreateAPIView):
         code = request.data['code']
 
         if not Confirmation.objects.filter(email=email).exists():
-            return Response({'error': 'no confirmation code was sent to this email'},
+            return Response({'error': 'No confirmation code was sent to this email'},
                             status=status.HTTP_400_BAD_REQUEST)
 
         if not Confirmation.objects.filter(email=email, code=code).exists():
-            return Response({'error': 'incorrect confirmation code'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'Incorrect confirmation code'}, status=status.HTTP_400_BAD_REQUEST)
 
         confirmation = Confirmation.objects.get(email=email, code=code)
         confirmation.delete()
