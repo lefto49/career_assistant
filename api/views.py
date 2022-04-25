@@ -120,7 +120,7 @@ class GetResetLinkView(CreateAPIView):
         Returns 400 status if user with such an email does not exist.
         :param request: data that must be passed: user's email.
         """
-        if not User.objects.filter(email=request.data['email']).exists:
+        if not User.objects.filter(email=request.data['email']).exists():
             return Response({'error': 'User with such email does not exist'}, status=status.HTTP_400_BAD_REQUEST)
 
         user = User.objects.get(email=request.data['email'])
@@ -128,7 +128,7 @@ class GetResetLinkView(CreateAPIView):
         token = PasswordResetTokenGenerator().make_token(user)
         encoded_uid = urlsafe_base64_encode(str(user.id).encode('utf-8'))
         domain = get_current_site(request=request).domain
-        reset_path = 'https://' + domain + '/' + encoded_uid + '/' + token
+        reset_path = 'http://' + domain + '/' + encoded_uid + '/' + token
 
         mail_subject = 'Password Reset'
         message = "Hello from Career Assistant! \n\nRecently you've asked to reset your password." \
