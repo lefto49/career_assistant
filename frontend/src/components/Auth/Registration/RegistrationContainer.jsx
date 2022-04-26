@@ -12,6 +12,7 @@ const RegistrationContainer = (props) => {
   const submitForm = async() => {
       try{
         let data = await authApi.registrationApi(field.email);
+        console.log(data);
       }
       catch(eroor){
          console.log("error!")
