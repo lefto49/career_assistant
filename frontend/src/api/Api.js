@@ -10,8 +10,15 @@ const $host = axios.create({
   });
 
   export const authApi = {
-      registrationApi: async(email)=>{
-       const {data} = await $host.post("get-confirmation-code/",{email});
-       return data;
-      }
+      registrationApi: {
+          sendEmail: async(email)=>{
+        const responce = await $host.post("get-confirmation-code/",{email});
+        if (responce.status === 200){
+        // localStorage.setItem("email", email);
+         return "success";
+        }
+        return "erorr";
+       }
+    }
   }
+
