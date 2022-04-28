@@ -1,18 +1,25 @@
 import React from 'react'
 import App from './App'
 import { checkAuthUserData } from './redux/auth-redux'
+import {connect} from "react-redux";
+import {useEffect} from "react";
 
-const AppContainer = () => {
+const AppContainer = (props) => {
+  useEffect(() => {
+    props.checkAuthUserData();
+  }, []);
   return (
-     <App/>
+     <App {...props}/>
   )
 }
 
 let mapStateToProps = (state) => {
     return {
-    //  isAuth: state.auth.isAuth,
+      isAuth: state.auth.isAuth,
     };
   };
 
 
-export default AppContainer;
+  export default connect(mapStateToProps, {
+    checkAuthUserData,
+  })(AppContainer);
