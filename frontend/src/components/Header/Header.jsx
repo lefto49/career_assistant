@@ -1,9 +1,9 @@
-import React from 'react'
-import { NavLink } from 'react-router-dom';
-import "./Header.scss"
+import React from "react";
+import { NavLink } from "react-router-dom";
+import "./Header.scss";
 
 const Header = (props) => {
-    return (
+  return (
     <header className="header">
       <div className="header__body catalog-header">
         <div className="catalog-header__container">
@@ -15,23 +15,47 @@ const Header = (props) => {
                     Home
                   </NavLink>
                 </li>
-                <li className="menu__item">
-                  <NavLink to="/login" className="menu__link">
-                    Sign in
-                  </NavLink>
-                </li>
-                <li className="menu__item">
-                  <NavLink to="/registration" className="menu__link">
-                    Registration
-                  </NavLink>
-                </li>
+                {!props.isAuth ? (
+                  <>
+                    {" "}
+                    <li className="menu__item">
+                      <NavLink to="/login" className="menu__link">
+                        Sign in
+                      </NavLink>
+                    </li>
+                    <li className="menu__item">
+                      <NavLink to="/registration" className="menu__link">
+                        Registration
+                      </NavLink>
+                    </li>
+                  </>
+                ) : (
+                  <>
+                    {" "}
+                    <li className="menu__item">
+                      <NavLink to="/profile" className="menu__link">
+                        Profile
+                      </NavLink>
+                    </li>
+                    <li className="menu__item">
+                      <button
+                        onClick={(e) => {
+                          e.preventDefault();
+                        }}
+                        className="menu__link"
+                      >
+                        Log out
+                      </button>
+                    </li>
+                  </>
+                )}
               </ul>
             </nav>
           </div>
         </div>
       </div>
     </header>
-      );
-}
+  );
+};
 
 export default Header;

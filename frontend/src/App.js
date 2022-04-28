@@ -7,8 +7,8 @@ import AppRouter from './components/AppRouter';
 const App=(props) => {
   return (
     <BrowserRouter>
-     <Header/>
-     <AppRouter/>
+     <Header {...props}/>
+     <AppRouter {...props}/>
     </BrowserRouter>
   );
 } 
