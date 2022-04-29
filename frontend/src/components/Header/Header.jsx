@@ -41,6 +41,9 @@ const Header = (props) => {
                       <button
                         onClick={(e) => {
                           e.preventDefault();
+                          localStorage.removeItem("refresh");
+                          localStorage.removeItem("access");
+                          props.checkAuthUserData();
                         }}
                         className="menu__link"
                       >

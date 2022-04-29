@@ -1,3 +1,5 @@
+import ForgotPassword from "./components/Auth/ForgotPassword/ForgotPassword";
+import ForgotPasswordContainer from "./components/Auth/ForgotPassword/ForgotPasswordContainer";
 import Login from "./components/Auth/Login/Login";
 import LoginContainer from "./components/Auth/Login/LoginContainer";
 import RegistrationContainer from "./components/Auth/Registration/RegistrationContainer";
@@ -12,6 +14,10 @@ export const authRoutes = [
     {
         path: "/registration",
         Component: RegistrationContainer
+    },
+    {
+        path: "/forgotPassword",
+        Component: ForgotPasswordContainer
     }
 ]
 

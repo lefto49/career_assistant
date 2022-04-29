@@ -4,7 +4,7 @@ import logo from './logo.png'
 const MainPage = () => {
   return (
     <div>
-        <img src={logo} alt={"logo"} class="center-img"/> 
+        <img src={logo} alt={"logo"} className ="center-img"/> 
     </div>
   );
 };
