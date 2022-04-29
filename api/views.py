@@ -127,8 +127,8 @@ class GetResetLinkView(CreateAPIView):
         # Creates all the necessary parts for a reset link.
         token = PasswordResetTokenGenerator().make_token(user)
         encoded_uid = urlsafe_base64_encode(str(user.id).encode('utf-8'))
-        domain = get_current_site(request=request).domain
-        reset_path = 'http://' + domain + '/' + encoded_uid + '/' + token
+        # domain = get_current_site(request=request).domain
+        reset_path = 'http://localhost:3000/forgotPassword?' + 'encodeUid=' + encoded_uid + '&' + 'token=' + token
 
         mail_subject = 'Password Reset'
         message = "Hello from Career Assistant! \n\nRecently you've asked to reset your password." \

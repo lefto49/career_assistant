@@ -38,9 +38,24 @@ export const profileApi = {
     }
     return null;
   },
-}
+};
 
 export const authApi = {
+  sendNewData: async (id, token, password) => {
+    const responce = await $host.post("password-reset/", { id, token, password });
+    if (responce.status === 200) {
+      return "success";
+    }
+    return "erorr";
+  },
+
+  forgotPasswordApi: async (email) => {
+    const responce = await $host.post("get-reset-link/", { email });
+    if (responce.status === 200) {
+      return "success";
+    }
+    return "erorr";
+  },
   loginApi: async (email, password) => {
     const responce = await $host.post("login/", { email, password });
     if (responce.status >= 200 && responce.status < 300) {
