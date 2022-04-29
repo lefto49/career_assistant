@@ -5,6 +5,11 @@ body {
 	font-family: sans-serif;
 }
 
+.center-img {
+	display: block;
+	margin: 0 auto;
+  }
+
 .form {
 	position: absolute;
 	top: 50%;
