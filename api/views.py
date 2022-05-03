@@ -12,7 +12,7 @@ from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.http import urlsafe_base64_encode
 from django.core.mail import EmailMessage
 
-from .models import User, Confirmation, Vacancy, Cup, Course
+from .models import User, Confirmation
 from .serializers import UserSerializer, LoginSerializer, PasswordResetSerializer, VacancySerializer, CupSerializer, \
     CourseSerializer
 from .NotAuthenticated import NotAuthenticated
@@ -75,7 +75,7 @@ class RetrieveUpdateUserView(RetrieveUpdateAPIView):
         """
         try:
             user = get_user_from_token(request.headers['Authorization'])
-        except:
+        except ObjectDoesNotExist:
             return Response({'error': 'User with such an id does not exist'}, status=status.HTTP_400_BAD_REQUEST)
 
         serializer = self.serializer_class(user)
@@ -90,7 +90,7 @@ class RetrieveUpdateUserView(RetrieveUpdateAPIView):
         """
         try:
             user = get_user_from_token(request.headers['Authorization'])
-        except:
+        except ObjectDoesNotExist:
             return Response({'error': 'User with such an id does not exist'}, status=status.HTTP_400_BAD_REQUEST)
 
         serializer = self.serializer_class(user, data=request.data)
@@ -223,7 +223,7 @@ class GetRecommendationsView(RetrieveAPIView):
     def get(self, request, *args, **kwargs):
         try:
             user = get_user_from_token(request.headers['Authorization'])
-        except:
+        except ObjectDoesNotExist:
             return Response({'error': 'User with such an id does not exist'}, status=status.HTTP_400_BAD_REQUEST)
 
         vacancies = []
