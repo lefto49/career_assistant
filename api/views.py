@@ -221,6 +221,12 @@ class GetRecommendationsView(RetrieveAPIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request, *args, **kwargs):
+        """
+        Returns the recommendations for a user
+        :param request: data that must be passed: access token.
+        :return: 400 status code if a user with such an id does not exist,
+        200 and list of recommendations if everything is ok
+        """
         try:
             user = get_user_from_token(request.headers['Authorization'])
         except ObjectDoesNotExist:
