@@ -1,10 +1,10 @@
-import ForgotPassword from "./components/Auth/ForgotPassword/ForgotPassword";
+import AchievementContainer from "./components/Achievement/AchievementContainer";
 import ForgotPasswordContainer from "./components/Auth/ForgotPassword/ForgotPasswordContainer";
-import Login from "./components/Auth/Login/Login";
 import LoginContainer from "./components/Auth/Login/LoginContainer";
 import RegistrationContainer from "./components/Auth/Registration/RegistrationContainer";
 import MainPage from "./components/MainPage/MainPage";
 import ProfileContainer from "./components/Profile/ProfileContainer";
+import VerdictContainer from "./components/Verdict/VerdictContainer";
 
 export const authRoutes = [
     {
@@ -25,6 +25,14 @@ export const profileRoutes = [
     {
         path: "/profile",
         Component: ProfileContainer
+    },
+    {
+        path: "/recommendations",
+        Component: AchievementContainer
+    },
+    {
+        path: "/verdict",
+        Component: VerdictContainer
     }
 ]
 

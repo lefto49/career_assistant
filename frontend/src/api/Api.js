@@ -38,11 +38,31 @@ export const profileApi = {
     }
     return null;
   },
+
+  getRecommendations: async () => {
+    const responce = await $authHost.get("get-recommendations/");
+    if (responce.status === 200) {
+      return responce;
+    }
+    return null;
+  },
+
+  getVerdict: async () => {
+    const responce = await $authHost.get("get-verdict/");
+    if (responce.status === 200) {
+      return responce;
+    }
+    return null;
+  },
 };
 
 export const authApi = {
   sendNewData: async (id, token, password) => {
-    const responce = await $host.post("password-reset/", { id, token, password });
+    const responce = await $host.post("password-reset/", {
+      id,
+      token,
+      password,
+    });
     if (responce.status === 200) {
       return "success";
     }

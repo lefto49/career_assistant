@@ -38,6 +38,16 @@ const Header = (props) => {
                       </NavLink>
                     </li>
                     <li className="menu__item">
+                      <NavLink to="/recommendations" className="menu__link">
+                        Recommendation
+                      </NavLink>
+                    </li>
+                    <li className="menu__item">
+                      <NavLink to="/verdict" className="menu__link">
+                        Verdict
+                      </NavLink>
+                    </li>
+                    <li className="menu__item">
                       <button
                         onClick={(e) => {
                           e.preventDefault();
