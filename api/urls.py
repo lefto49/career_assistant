@@ -2,7 +2,7 @@ from django.urls import path
 from rest_framework_simplejwt.views import TokenRefreshView
 
 from .views import CreateUserView, RetrieveUpdateUserView, LoginView, PasswordResetView, ConfirmEmailView, \
-    GetResetLinkView, GetConfirmationCodeView, GetRecommendationsView
+    GetResetLinkView, GetConfirmationCodeView, GetRecommendationsView, ScorringResultView
 
 urlpatterns = [
     path('signup/', CreateUserView.as_view()),
@@ -13,5 +13,6 @@ urlpatterns = [
     path('refresh-token/', TokenRefreshView.as_view()),
     path('get-reset-link/', GetResetLinkView.as_view()),
     path('password-reset/', PasswordResetView.as_view()),
-    path('get-recommendations/', GetRecommendationsView.as_view())
+    path('get-recommendations/', GetRecommendationsView.as_view()),
+    path('get-verdict/', ScorringResultView.as_view())
 ]

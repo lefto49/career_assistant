@@ -8,7 +8,6 @@ const AchievementContainer = (props) => {
   useEffect(() => {
     props.getRecommendationData();
   }, []);
-  console.log(props);
   return <Achievement {...props} />;
 };
 

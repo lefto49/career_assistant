@@ -13,7 +13,7 @@ const VerdictContainer = (props) => {
 
 let mapStateToProps = (state) => {
   return {
-    veredict: state.veredict,
+    verdict: state.verdict,
   };
 };
 export default connect(mapStateToProps, { getVerdictData })(

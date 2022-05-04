@@ -245,3 +245,11 @@ class GetRecommendationsView(RetrieveAPIView):
             courses.append(CourseSerializer(course).data)
 
         return Response({'vacancies': vacancies, 'cups': cups, 'courses': courses}, status=status.HTTP_200_OK)
+
+
+class ScorringResultView(RetrieveAPIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, *args, **kwargs):
+        sp = ['You are the coolest frontender']
+        return Response({'verdict': sp}, status=status.HTTP_200_OK)

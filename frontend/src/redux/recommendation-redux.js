@@ -33,7 +33,6 @@ export const setRecommendData = ({vacancies, cups, courses}) => ({
 
 export const getRecommendationData = () => (dispatch) => {
   return profileApi.getRecommendations().then((responce) => {
-    console.log(responce);
     dispatch(setRecommendData(responce.data));
   });
 };
