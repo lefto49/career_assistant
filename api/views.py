@@ -1,24 +1,22 @@
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
-from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView
+from rest_framework.generics import CreateAPIView, RetrieveUpdateAPIView, RetrieveAPIView
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from jwt import decode
+
 from rest_framework_simplejwt.exceptions import InvalidToken
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.http import urlsafe_base64_encode
-from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import EmailMessage
 
-import career_assistant.settings
-
 from .models import User, Confirmation
-from .serializers import UserSerializer, LoginSerializer, PasswordResetSerializer
+from .serializers import UserSerializer, LoginSerializer, PasswordResetSerializer, VacancySerializer, CupSerializer, \
+    CourseSerializer
 from .NotAuthenticated import NotAuthenticated
-from .utils import generate_code
+from .utils import generate_code, set_recommendations, get_user_from_token
 
 
 class CreateUserView(CreateAPIView, TokenObtainPairView):
@@ -41,8 +39,8 @@ class CreateUserView(CreateAPIView, TokenObtainPairView):
             return Response({'error': e.detail}, status=status.HTTP_400_BAD_REQUEST)
 
         user = serializer.save()
-
         token = RefreshToken.for_user(user)
+        set_recommendations(user)
 
         return Response({'user': serializer.data,
                          'refresh': str(token),
@@ -75,13 +73,11 @@ class RetrieveUpdateUserView(RetrieveUpdateAPIView):
         Returns 400 status if user with such an id does not exist.
         :return: data of the user with the specified id.
         """
-        token = request.headers['Authorization'][7:]
-        uid = decode(token, career_assistant.settings.SECRET_KEY, algorithms=['HS256'])['user_id']
-
-        if not User.objects.filter(id=uid).exists():
+        try:
+            user = get_user_from_token(request.headers['Authorization'])
+        except ObjectDoesNotExist:
             return Response({'error': 'User with such an id does not exist'}, status=status.HTTP_400_BAD_REQUEST)
 
-        user = User.objects.get(id=uid)
         serializer = self.serializer_class(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
@@ -92,13 +88,11 @@ class RetrieveUpdateUserView(RetrieveUpdateAPIView):
         :param request: data that must be passed: all User model fields including both changed and unchanged.
         :return: refreshed user data.
         """
-        token = request.headers['Authorization'][7:]
-        uid = decode(token, career_assistant.settings.SECRET_KEY, algorithms=['HS256'])['user_id']
-
-        if not User.objects.filter(id=uid).exists():
+        try:
+            user = get_user_from_token(request.headers['Authorization'])
+        except ObjectDoesNotExist:
             return Response({'error': 'User with such an id does not exist'}, status=status.HTTP_400_BAD_REQUEST)
 
-        user = User.objects.get(id=uid)
         serializer = self.serializer_class(user, data=request.data)
 
         try:
@@ -107,6 +101,7 @@ class RetrieveUpdateUserView(RetrieveUpdateAPIView):
             return Response({'error': e.detail}, status=status.HTTP_400_BAD_REQUEST)
 
         serializer.save()
+        set_recommendations(user)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -220,3 +215,33 @@ class ConfirmEmailView(CreateAPIView):
         confirmation.delete()
 
         return Response({'email': email}, status=status.HTTP_200_OK)
+
+
+class GetRecommendationsView(RetrieveAPIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, *args, **kwargs):
+        """
+        Returns the recommendations for a user
+        :param request: data that must be passed: access token.
+        :return: 400 status code if a user with such an id does not exist,
+        200 and list of recommendations if everything is ok
+        """
+        try:
+            user = get_user_from_token(request.headers['Authorization'])
+        except ObjectDoesNotExist:
+            return Response({'error': 'User with such an id does not exist'}, status=status.HTTP_400_BAD_REQUEST)
+
+        vacancies = []
+        for vacancy in user.vacancies.all():
+            vacancies.append(VacancySerializer(vacancy).data)
+
+        cups = []
+        for cup in user.cups.all():
+            cups.append(CupSerializer(cup).data)
+
+        courses = []
+        for course in user.courses.all():
+            courses.append(CourseSerializer(course).data)
+
+        return Response({'vacancies': vacancies, 'cups': cups, 'courses': courses}, status=status.HTTP_200_OK)

@@ -10,7 +10,46 @@ from rest_framework_simplejwt.settings import api_settings
 
 from django.core.exceptions import ObjectDoesNotExist
 
-from .models import User
+from .models import User, Vacancy, Cup, Course
+
+
+class VacancySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Vacancy
+        fields = ['title', 'description']
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        for field in ('title', 'description'):
+            if not data[field]:
+                data[field] = ''
+        return data
+
+
+class CupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Cup
+        fields = ['title', 'description', 'link']
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        for field in ('title', 'description', 'link'):
+            if not data[field]:
+                data[field] = ''
+        return data
+
+
+class CourseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Course
+        fields = ['title', 'description', 'link']
+
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+        for field in ('title', 'description', 'link'):
+            if not data[field]:
+                data[field] = ''
+        return data
 
 
 class UserSerializer(serializers.ModelSerializer):
