@@ -59,6 +59,12 @@ class UserSerializer(serializers.ModelSerializer):
                   'university', 'vacancy', 'experience', 'email', 'password']
         extra_kwargs = {'password': {'write_only': True}}
 
+    def validate(self, data):
+        if data['birth_year'] < 1920 or data['birth_year'] > 2021:
+            raise serializers.ValidationError({'birth_year': 'the value must be between 1920 and 2021'})
+
+        return data
+
     def update(self, instance, validated_data):
         super().update(instance, validated_data)
 

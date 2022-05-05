@@ -50,7 +50,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     cups = models.ManyToManyField(to=Cup)
     courses = models.ManyToManyField(to=Course)
 
-    scoring_value = models.FloatField()
+    scoring_value = models.FloatField(null=True)
 
     objects = UserManager()
 
