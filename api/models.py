@@ -5,18 +5,20 @@ from django.db import models
 
 class Vacancy(models.Model):
     title = models.TextField()
-    description = models.TextField(db_column='Детальное описание', null=True)
+    title_edited = models.TextField(null=True)
+    description = models.TextField(null=True)
+    description_edited = models.TextField(null=True)
 
 
 class Cup(models.Model):
     title = models.TextField()
-    description = models.TextField(db_column='Детальное описание', null=True)
+    description = models.TextField(null=True)
     link = models.TextField(null=True)
 
 
 class Course(models.Model):
     title = models.TextField()
-    description = models.TextField(db_column='Детальное описание', null=True)
+    description = models.TextField(null=True)
     link = models.TextField(null=True)
 
 
@@ -43,9 +45,12 @@ class User(AbstractBaseUser, PermissionsMixin):
     vacancy = models.CharField(max_length=30)
     experience = models.CharField(max_length=1000)
     email = models.EmailField(unique=True)
+
     vacancies = models.ManyToManyField(to=Vacancy)
     cups = models.ManyToManyField(to=Cup)
     courses = models.ManyToManyField(to=Course)
+
+    scoring_value = models.FloatField()
 
     objects = UserManager()
 

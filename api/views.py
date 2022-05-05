@@ -16,7 +16,8 @@ from .models import User, Confirmation
 from .serializers import UserSerializer, LoginSerializer, PasswordResetSerializer, VacancySerializer, CupSerializer, \
     CourseSerializer
 from .NotAuthenticated import NotAuthenticated
-from .utils import generate_code, set_recommendations, get_user_from_token
+from .utils import generate_code, set_recommendations, get_user_from_token, get_scoring_verdict
+from .ScoringSystem import process_users
 
 
 class CreateUserView(CreateAPIView, TokenObtainPairView):
@@ -40,7 +41,9 @@ class CreateUserView(CreateAPIView, TokenObtainPairView):
 
         user = serializer.save()
         token = RefreshToken.for_user(user)
+        user.scoring_value = process_users(user.experience, user.vacancy)
         set_recommendations(user)
+        user.save()
 
         return Response({'user': serializer.data,
                          'refresh': str(token),
@@ -101,7 +104,11 @@ class RetrieveUpdateUserView(RetrieveUpdateAPIView):
             return Response({'error': e.detail}, status=status.HTTP_400_BAD_REQUEST)
 
         serializer.save()
+
+        user.scoring_value = process_users(user.experience, user.vacancy)
         set_recommendations(user)
+        user.save()
+
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
@@ -251,5 +258,5 @@ class ScorringResultView(RetrieveAPIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request, *args, **kwargs):
-        sp = ['You are the coolest frontender']
-        return Response({'verdict': sp}, status=status.HTTP_200_OK)
+        user = get_user_from_token(request.headers['Authorization'])
+        return Response({'verdict': get_scoring_verdict(user.scoring_value)}, status=status.HTTP_200_OK)
