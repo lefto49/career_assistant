@@ -96,7 +96,7 @@ class RetrieveUpdateUserView(RetrieveUpdateAPIView):
         except ObjectDoesNotExist:
             return Response({'error': 'User with such an id does not exist'}, status=status.HTTP_400_BAD_REQUEST)
 
-        serializer = self.serializer_class(user, data=request.data)
+        serializer = self.serializer_class(user, data=request.data, partial=True)
 
         try:
             serializer.is_valid(raise_exception=True)
