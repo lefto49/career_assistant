@@ -88,7 +88,7 @@ class RetrieveUpdateUserView(RetrieveUpdateAPIView):
         """
         Updates user data.
         Returns 400 status if new data was incorrect.
-        :param request: data that must be passed: all User model fields including both changed and unchanged.
+        :param request: data that must be passed: User model fields that were changed.
         :return: refreshed user data.
         """
         try:
