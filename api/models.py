@@ -37,12 +37,12 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
-    last_name = models.CharField(max_length=30)
-    first_name = models.CharField(max_length=30)
+    last_name = models.TextField()
+    first_name = models.TextField()
     birth_year = models.IntegerField()
-    city = models.CharField(max_length=30)
-    university = models.CharField(max_length=100)
-    vacancy = models.CharField(max_length=30)
+    city = models.TextField()
+    university = models.TextField()
+    vacancy = models.TextField
     experience = models.TextField()
     email = models.EmailField(unique=True)
 
