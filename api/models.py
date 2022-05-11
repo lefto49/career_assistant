@@ -43,14 +43,14 @@ class User(AbstractBaseUser, PermissionsMixin):
     city = models.CharField(max_length=30)
     university = models.CharField(max_length=100)
     vacancy = models.CharField(max_length=30)
-    experience = models.CharField(max_length=1000)
+    experience = models.TextField()
     email = models.EmailField(unique=True)
 
     vacancies = models.ManyToManyField(to=Vacancy)
     cups = models.ManyToManyField(to=Cup)
     courses = models.ManyToManyField(to=Course)
 
-    scoring_value = models.FloatField(null=True)
+    scoring_value = models.FloatField()
 
     objects = UserManager()
 
