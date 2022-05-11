@@ -42,7 +42,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     birth_year = models.IntegerField()
     city = models.TextField()
     university = models.TextField()
-    vacancy = models.TextField
+    vacancy = models.TextField()
     experience = models.TextField()
     email = models.EmailField(unique=True)
 
@@ -50,7 +50,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     cups = models.ManyToManyField(to=Cup)
     courses = models.ManyToManyField(to=Course)
 
-    scoring_value = models.FloatField()
+    scoring_value = models.FloatField(null=True)
 
     objects = UserManager()
 
