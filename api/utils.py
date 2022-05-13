@@ -44,15 +44,15 @@ def get_user_from_token(token):
     return User.objects.get(id=uid)
 
 def get_scoring_verdict(scoring_value):
-    if scoring_value <= 0.1:
+    if scoring_value <= 0.02:
         verdict = 'Unfortunately, right now you are not ready to apply for a desired vacancy.' \
                   '\nBut do not get sad: we already have recommendations that can help boost your skills! ' \
                   '\nClick on Recommendations for more details.'
-    elif scoring_value <= 0.5:
+    elif scoring_value <= 0.09:
         verdict = 'You already have some skills that make you suitable for junior positions!' \
                   '\nHowever, we suggest you develop them even further by doing various activities.' \
                   '\nClick on Recommendations for more details.'
-    elif scoring_value <= 0.75:
+    elif scoring_value <= 0.2:
         verdict = 'Wow, you are quite a good specialist in your field! \nDo not stop on what you have already achieved' \
                   'and continue improving your skills even further by participating in the recommended activities. ' \
                   '\nClick on Recommendations for more details.'
