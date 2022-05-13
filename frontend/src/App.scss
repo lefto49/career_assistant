@@ -1,5 +1,3 @@
-
-
 * {
   margin: 0;
   padding: 0;
@@ -32,8 +30,7 @@ aside {
 }
 
 body {
-  font-family: "Inter",
-    sans-serif;
+  font-family: "Inter", sans-serif;
   line-height: 27px;
   font-weight: 300;
   color: white;
@@ -153,7 +150,6 @@ a {
   @media (max-width: 1650px) {
     max-width: 970px;
   }
-
 }
 
 .page {
@@ -230,7 +226,7 @@ a {
 
       &:before,
       &:after {
-        content: '';
+        content: "";
         position: absolute;
         border: 3px solid transparent;
         border-radius: 50%;
@@ -238,7 +234,7 @@ a {
 
       &:before {
         border-width: 4px;
-        border-top-color: #254E70;
+        border-top-color: #254e70;
         top: 6px;
         left: 6px;
         right: 6px;
@@ -248,7 +244,7 @@ a {
 
       &:after {
         border-width: 2px;
-        border-top-color: #FFFBFE;
+        border-top-color: #fffbfe;
         top: 15px;
         left: 15px;
         right: 15px;
@@ -301,7 +297,7 @@ a {
   border-radius: 5px;
   display: inline-flex;
   justify-content: space-between;
-  transition: all .3s linear;
+  transition: all 0.3s linear;
 
   &__text {
     font-weight: 400;
@@ -328,7 +324,6 @@ a {
 
     .button__arrow-right {
       background-image: url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTEiIGhlaWdodD0iMTciIHZpZXdCb3g9IjAgMCAxMSAxNyIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTIuNTg2NzkgMS4yNTkzNUw5Ljk5OTIxIDguMzUwOTVDMTAuMTgwMSA4LjUyMjU4IDEwLjI3IDguNzQ1MDYgMTAuMjcgOC45NjY2QzEwLjI3IDkuMTg4MTQgMTAuMTgwMSA5LjQxMDggOS45OTkyMSA5LjU4MjI0TDIuNTg2NzkgMTYuNjczOEMyLjIxNjI5IDE3LjAyOTkgMS42MDE0MyAxNy4wNDE1IDEuMjE0NDEgMTYuNzAwNUMwLjgyNDc2NSAxNi4zNjE5IDAuODEyMDk0IDE1Ljc5NTggMS4xODUzMiAxNS40NDIxTDcuOTg2NDUgOC45MzMxNUwxLjE4NjQ4IDIuNDkxMDFDMC44MTMyNjggMi4xMzg0NyAwLjgyNTkzOSAxLjU3MTQ0IDEuMjE1NTggMS4yMzI2M0MxLjYwMjY1IDAuODkxNiAyLjIxODM5IDAuOTAzNDc1IDIuNTg2NzkgMS4yNTkzNVoiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo=");
-
     }
   }
 }
@@ -352,7 +347,7 @@ a {
   display: block;
 }
 
-.copyright-content{
+.copyright-content {
   position: relative;
   &:before {
     content: "";

@@ -22,7 +22,7 @@ const recommendReducer = (state = initialState, action) => {
   }
 };
 
-export const setRecommendData = ({vacancies, cups, courses}) => ({
+export const setRecommendData = ({ vacancies, cups, courses }) => ({
   type: SET_RECOMMENDATION_DATA,
   data: {
     vacancies,

@@ -6,7 +6,7 @@ import {
 import Profile from "./Profile";
 import { connect } from "react-redux";
 import { useEffect, useState } from "react";
-import {profileApi} from "../../api/Api";
+import { profileApi } from "../../api/Api";
 
 const ProfileContainer = (props) => {
   const [activeChange, setActiveChange] = useState(false);
@@ -21,9 +21,7 @@ const ProfileContainer = (props) => {
   const submitForm = async () => {
     try {
       let responce;
-      responce = await profileApi.putNewUserUpdate(
-        props.profile
-      );
+      responce = await profileApi.putNewUserUpdate(props.profile);
       if (responce !== "erorr") {
         return props.setProfileUserData(responce.data);
       }
@@ -32,11 +30,16 @@ const ProfileContainer = (props) => {
     }
   };
 
-  return <Profile {...props} activeChange = {activeChange} setActiveChange = {setActiveChange} handleFormSubmit = {handleFormSubmit} submitForm = {submitForm} />;
-
+  return (
+    <Profile
+      {...props}
+      activeChange={activeChange}
+      setActiveChange={setActiveChange}
+      handleFormSubmit={handleFormSubmit}
+      submitForm={submitForm}
+    />
+  );
 };
-
-
 
 let mapStateToProps = (state) => {
   return {

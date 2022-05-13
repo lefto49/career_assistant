@@ -15,12 +15,9 @@ const LoginContainer = (props) => {
   const submitForm = async () => {
     try {
       let responce;
-      responce = await authApi.loginApi(
-        propperty.email,
-        propperty.password
-      );
+      responce = await authApi.loginApi(propperty.email, propperty.password);
       if (responce !== "erorr") {
-        localStorage.setItem("password",propperty.password);
+        localStorage.setItem("password", propperty.password);
         return props.checkAuthUserData();
       }
     } catch (eroor) {
@@ -42,6 +39,4 @@ let mapStateToProps = () => {
   return {};
 };
 
-export default connect(mapStateToProps, { checkAuthUserData })(
-    LoginContainer
-);
+export default connect(mapStateToProps, { checkAuthUserData })(LoginContainer);

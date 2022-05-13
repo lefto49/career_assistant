@@ -7,38 +7,38 @@ import ProfileContainer from "./components/Profile/ProfileContainer";
 import VerdictContainer from "./components/Verdict/VerdictContainer";
 
 export const authRoutes = [
-    {
-        path: "/login",
-        Component: LoginContainer
-    },
-    {
-        path: "/registration",
-        Component: RegistrationContainer
-    },
-    {
-        path: "/forgotPassword",
-        Component: ForgotPasswordContainer
-    }
-]
+  {
+    path: "/login",
+    Component: LoginContainer,
+  },
+  {
+    path: "/registration",
+    Component: RegistrationContainer,
+  },
+  {
+    path: "/forgotPassword",
+    Component: ForgotPasswordContainer,
+  },
+];
 
 export const profileRoutes = [
-    {
-        path: "/profile",
-        Component: ProfileContainer
-    },
-    {
-        path: "/recommendations",
-        Component: AchievementContainer
-    },
-    {
-        path: "/verdict",
-        Component: VerdictContainer
-    }
-]
+  {
+    path: "/profile",
+    Component: ProfileContainer,
+  },
+  {
+    path: "/recommendations",
+    Component: AchievementContainer,
+  },
+  {
+    path: "/verdict",
+    Component: VerdictContainer,
+  },
+];
 
 export const publicRoutes = [
-    {
-        path: "/",
-        Component: MainPage
-    }
-]
+  {
+    path: "/",
+    Component: MainPage,
+  },
+];

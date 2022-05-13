@@ -1,10 +1,10 @@
 import React from "react";
-import logo from './logo.png'
+import logo from "./logo.png";
 
 const MainPage = () => {
   return (
     <div>
-        <img src={logo} alt={"logo"} className ="center-img"/> 
+      <img src={logo} alt={"logo"} className="center-img" />
     </div>
   );
 };

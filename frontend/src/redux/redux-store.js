@@ -5,12 +5,11 @@ import profileReducer from "./profile-redux";
 import recommendReducer from "./recommendation-redux";
 import verdictReducer from "./verdict-redux";
 
-
 let reducers = combineReducers({
-    auth: authReducer,
-    profile: profileReducer,
-    recommendation: recommendReducer,
-    verdict: verdictReducer
+  auth: authReducer,
+  profile: profileReducer,
+  recommendation: recommendReducer,
+  verdict: verdictReducer,
 });
 
 let store = createStore(reducers, applyMiddleware(thunkMiddleware));

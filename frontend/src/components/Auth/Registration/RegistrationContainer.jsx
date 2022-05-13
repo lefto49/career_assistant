@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { authApi } from "../../../api/Api";
 import Registration from "./Registration";
-import {checkAuthUserData} from "../../../redux/auth-redux";
-import {connect} from "react-redux";
+import { checkAuthUserData } from "../../../redux/auth-redux";
+import { connect } from "react-redux";
 
 const RegistrationContainer = (props) => {
   const [propperty, setPropperty] = useState({
@@ -43,10 +43,10 @@ const RegistrationContainer = (props) => {
           propperty.email,
           propperty.password
         );
-        if (responce !== "erorr"){
-          localStorage.setItem("password",propperty.password);
+        if (responce !== "erorr") {
+          localStorage.setItem("password", propperty.password);
           console.log(responce);
-           return props.checkAuthUserData();
+          return props.checkAuthUserData();
         }
       }
       if (responce === "success") {
@@ -71,4 +71,6 @@ let mapStateToProps = () => {
   return {};
 };
 
-export default connect(mapStateToProps, { checkAuthUserData })(RegistrationContainer);
+export default connect(mapStateToProps, { checkAuthUserData })(
+  RegistrationContainer
+);

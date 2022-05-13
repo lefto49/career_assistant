@@ -16,6 +16,4 @@ let mapStateToProps = (state) => {
     verdict: state.verdict,
   };
 };
-export default connect(mapStateToProps, { getVerdictData })(
-    VerdictContainer
-);
+export default connect(mapStateToProps, { getVerdictData })(VerdictContainer);

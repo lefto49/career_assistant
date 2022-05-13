@@ -3,7 +3,7 @@ import { profileApi } from "../api/Api";
 const SET_VERDICT_DATA = "SET-VERDICT-DATA";
 
 let initialState = {
-  verdict: null
+  verdict: null,
 };
 
 const verdictReducer = (state = initialState, action) => {
@@ -19,10 +19,10 @@ const verdictReducer = (state = initialState, action) => {
   }
 };
 
-export const setVerdictData = ({verdict}) => ({
+export const setVerdictData = ({ verdict }) => ({
   type: SET_VERDICT_DATA,
   data: {
-    verdict
+    verdict,
   },
 });
 
