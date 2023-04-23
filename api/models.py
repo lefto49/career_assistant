@@ -1,39 +1,14 @@
-from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
+from django.contrib.auth.base_user import AbstractBaseUser
 from django.contrib.auth.models import PermissionsMixin
 from django.db import models
 
+from api.data.Vacancy import Vacancy
 
-class Vacancy(models.Model):
-    title = models.TextField()
-    title_edited = models.TextField(null=True)
-    description = models.TextField(null=True)
-    description_edited = models.TextField(null=True)
+from api.data.Cup import Cup
 
+from api.data.Course import Course
 
-class Cup(models.Model):
-    title = models.TextField()
-    description = models.TextField(null=True)
-    link = models.TextField(null=True)
-
-
-class Course(models.Model):
-    title = models.TextField()
-    description = models.TextField(null=True)
-    link = models.TextField(null=True)
-
-
-class Confirmation(models.Model):
-    email = models.EmailField()
-    code = models.CharField(max_length=10)
-
-
-class UserManager(BaseUserManager):
-    def create(self, email, password, **validated_data):
-        user = self.model(email=self.normalize_email(email), **validated_data)
-        user.set_password(password)
-
-        user.save()
-        return user
+from api.data.UserManager import UserManager
 
 
 class User(AbstractBaseUser, PermissionsMixin):

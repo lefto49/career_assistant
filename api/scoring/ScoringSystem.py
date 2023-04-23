@@ -10,7 +10,7 @@ import scipy.spatial as sp
 import nltk
 from pymorphy2 import MorphAnalyzer
 
-from .models import Vacancy
+from api.data.Vacancy import Vacancy
 
 nltk.download('punkt')
 nltk.download('wordnet')
@@ -101,7 +101,7 @@ def load_data(experience, vacancy):
     vacancies = pd.DataFrame.from_records(Vacancy.objects.all().values())
     pymorphy2_analyzer_ru = MorphAnalyzer()
     analyzer_en = WordNetLemmatizer()
-    with open('api/stopwords-ru.json', 'r') as openfile:
+    with open('api/scoring/stopwords-ru.json', 'r') as openfile:
         stop_words = json.load(openfile)
 
     vacancy = preprocess_text(vacancy, stop_words, pymorphy2_analyzer_ru, analyzer_en)

@@ -4,12 +4,14 @@ import numpy as np
 from nltk.tokenize import TweetTokenizer
 from sklearn.feature_extraction.text import TfidfVectorizer
 
-from .models import Vacancy, Cup, Course
-
 
 # "jobs.xlsx" - название файла с данными о вакансиях
 # "courses.xlsx" - название файла с данными о вакансиях
 # "cups.xlsx" - название файла с данными о вакансиях
+from api.data.Course import Course
+from api.data.Cup import Cup
+from api.data.Vacancy import Vacancy
+
 
 def preprocess(text):
     tokenizer = TweetTokenizer()

@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'api',
     'frontend',
     'rest_framework',
-    'corsheaders'
+    'corsheaders',
+    'requests'
 ]
 
 MIDDLEWARE = [
@@ -114,8 +115,8 @@ EMAIL_HOST = 'smtp.yandex.ru'
 EMAIL_PORT = 465
 
 EMAIL_USE_SSL = True
-EMAIL_HOST_USER = 'careerassistant@yandex.ru'
-EMAIL_HOST_PASSWORD = 'hhftqryiyjixwdho'
+EMAIL_HOST_USER = 'medicine-organizer@yandex.ru'
+EMAIL_HOST_PASSWORD = ''
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
