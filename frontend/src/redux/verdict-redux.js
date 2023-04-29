@@ -27,8 +27,8 @@ export const setVerdictData = ({ verdict }) => ({
 });
 
 export const getVerdictData = () => (dispatch) => {
-  return profileApi.getVerdict().then((responce) => {
-    dispatch(setVerdictData(responce.data));
+  return profileApi.getVerdict().then((response) => {
+    dispatch(setVerdictData(response.data));
   });
 };
 

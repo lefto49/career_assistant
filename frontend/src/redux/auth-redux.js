@@ -29,7 +29,7 @@ export const setAuthUserData = (isAuth) => ({
 export const checkAuthUserData = () => (dispatch) => {
   return authApi
     .checkApi()
-    .then((responce) => {
+    .then((response) => {
       dispatch(setAuthUserData(true));
     })
     .catch((e) => {

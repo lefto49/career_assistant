@@ -56,11 +56,11 @@ export const setProfileUserData = ({
 });
 
 export const getProfileUserData = () => (dispatch) => {
-  return profileApi.getUserDataApi().then((responce) => {
-    console.log(responce);
-    console.log(responce.data);
-    if (responce !== null) {
-      dispatch(setProfileUserData(responce.data));
+  return profileApi.getUserDataApi().then((response) => {
+    console.log(response);
+    console.log(response.data);
+    if (response !== null) {
+      dispatch(setProfileUserData(response.data));
     }
   });
 };
