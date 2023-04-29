@@ -49,13 +49,13 @@ const Header = (props) => {
                     </li>
                     <li className="menu__item">
                       <button
+                        className="menu__link"
                         onClick={(e) => {
                           e.preventDefault();
                           localStorage.removeItem("refresh");
                           localStorage.removeItem("access");
                           props.checkAuthUserData();
                         }}
-                        className="menu__link"
                       >
                         Log out
                       </button>
