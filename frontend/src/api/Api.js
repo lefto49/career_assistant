@@ -22,7 +22,7 @@ $authHost.interceptors.request.use(authInterceptor);
 
 export const profileApi = {
   getUserDataApi: async () => {
-    const responce = await $authHost.get("profile/");
+    const responce = await $authHost.get("profile/info/");
     if (responce.status === 200) {
       return responce;
     }
@@ -32,7 +32,7 @@ export const profileApi = {
   putNewUserUpdate: async (data) => {
     const password = localStorage.getItem("password");
     data.password = password;
-    const responce = await $authHost.put("profile/", data);
+    const responce = await $authHost.put("profile/create/", data);
     if (responce.status === 200) {
       return responce;
     }
@@ -40,7 +40,7 @@ export const profileApi = {
   },
 
   getRecommendations: async () => {
-    const responce = await $authHost.get("get-recommendations/");
+    const responce = await $authHost.get("recommendations/show/");
     if (responce.status === 200) {
       return responce;
     }
@@ -48,7 +48,7 @@ export const profileApi = {
   },
 
   getVerdict: async () => {
-    const responce = await $authHost.get("get-verdict/");
+    const responce = await $authHost.get("scoring/result/");
     if (responce.status === 200) {
       return responce;
     }
@@ -58,7 +58,7 @@ export const profileApi = {
 
 export const authApi = {
   sendNewData: async (id, token, password) => {
-    const responce = await $host.post("password-reset/", {
+    const responce = await $host.post("auth/password-reset/", {
       id,
       token,
       password,
@@ -70,17 +70,27 @@ export const authApi = {
   },
 
   forgotPasswordApi: async (email) => {
-    const responce = await $host.post("get-reset-link/", { email });
+    const responce = await $host.post("auth/get-reset-link/", { email });
     if (responce.status === 200) {
       return "success";
     }
     return "erorr";
   },
   loginApi: async (email, password) => {
-    const responce = await $host.post("login/", { email, password });
+    const responce = await $host.post("auth/login/", { email, password });
     if (responce.status >= 200 && responce.status < 300) {
       localStorage.setItem("access", responce.data.access);
       localStorage.setItem("refresh", responce.data.refresh);
+      return responce.data.user;
+    }
+    else{
+      alert("неверный пароль");
+    }
+    return "erorr";
+  },
+  secLoginApi: async (email, password) => {
+    const responce = await $host.post("login/", { email, password });
+    if (responce.status >= 200 && responce.status < 300) {
       return responce.data.user;
     }
     return "erorr";
@@ -95,7 +105,7 @@ export const authApi = {
 
   registrationApi: {
     sendEmail: async (email) => {
-      const responce = await $host.post("get-confirmation-code/", { email });
+      const responce = await $host.post("auth/get-confirmation-code/", { email });
       if (responce.status === 200) {
         // localStorage.setItem("email", email);
         return "success";
@@ -103,7 +113,7 @@ export const authApi = {
       return "erorr";
     },
     sendCode: async (email, code) => {
-      const responce = await $host.post("confirm-email/", { email, code });
+      const responce = await $host.post("auth/confirm-email/", { email, code });
       if (responce.status === 200) {
         return "success";
       }
